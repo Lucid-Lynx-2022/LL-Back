@@ -9,7 +9,8 @@ module.exports = {
     getAllPublics : getAllPublics,
     getPublicById : getPublicById,
     deletePublic : deletePublic,
-    addPublic : addPublic
+    addPublic : addPublic,
+    updatePublic : updatePublic
 }
 
 
@@ -76,4 +77,47 @@ async function addPublic(req, res){
         .catch(err => {
             return res.status(400).send({ error: 400, msg: 'publicacion ya existente' })
         })
+}
+
+
+async function updatePublic(req, res){
+    const id  = req.params.id;
+    let imageURL = ""
+    let title = "";
+    if (!thisPublicExists(id)) {
+        return res.status(400).send({ error: 400, msg: 'Esta publicacion no existe' })
+    };
+    if(req.file){
+
+        if(!req.body.title && typeof req.body.title != 'string'){
+            title = (await publics.findById(id)).title;
+        }else{
+            title  = req.body.title;
+        }
+        imageURL = await imageRepository.uploadImage(title,req.file.buffer,req.file.mimetype);
+    }else{
+        imageURL = (await publics.findById(id)).image;
+    }
+
+
+    publics.findByIdAndUpdate(
+        { _id: id },
+        { 
+            title: req.body.title,
+            description: req.body.description,
+            userId: req.body.userId,
+            image: imageURL
+        },
+        function(err, result) {
+          if (err) {
+            return res.status(400).send({ error: 400, msg: 'Esta publicacion no existe' })
+          } else {
+            res.send("publicacion actualizado con exito");
+          }
+        }
+      );
+}
+
+async function thisPublicExists(id){
+    return ( await publics.findOne({_id: id}) ) != null
 }
