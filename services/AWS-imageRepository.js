@@ -10,7 +10,7 @@ class ImageRepository {
     }
 
     uploadImage(name,image, type){
-        const Key = `${name}.${type.split('/')[1]}`;
+        const Key = `${Math.random()}.${name}.${type.split('/')[1]}`;
         return new Promise((resolve, reject) => {
             const params = {
                 Bucket: config.aws.s3BucketName,
@@ -21,6 +21,24 @@ class ImageRepository {
             };
 
             this.s3.upload(params, (err,data) => {
+                if(err){
+                    resolve(err)
+                }else{
+                    resolve(data.Location)
+                }
+            })
+        });
+    }
+
+    deleteObject(key){
+        
+        return new Promise((resolve, reject) => {
+            const params = {
+                Bucket: config.aws.s3BucketName,
+                Key:key
+            };
+
+            this.s3.deleteObject(params, (err,data) => {
                 if(err){
                     resolve(err)
                 }else{

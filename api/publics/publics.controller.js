@@ -1,7 +1,7 @@
 const res = require('express/lib/response');
 const publics = require('./publics.model')
 
-const ImageRepository = require('../../services/imageRepository');
+const ImageRepository = require('../../services/AWS-imageRepository');
 const imageRepository = new ImageRepository();
 
 
@@ -15,7 +15,6 @@ module.exports = {
 
 
 function getAllPublics(req, res){
-
     return publics.find({},'title description userId image')
         .then(response => {
             return res.json(response)
@@ -34,6 +33,8 @@ function getPublicById (req, res){
 
 async function deletePublic(req, res){
     const id = req.params.id
+    const public = await publics.findOne({_id: id})
+    
     return publics.deleteOne({_id : id})
     .then(response => {
         if(response.deletedCount == 0){
@@ -41,10 +42,11 @@ async function deletePublic(req, res){
                 error: 400, 
                 msg: 'No puedes borrar la publicacion porque no existe' })
         }else{
-            //eliminar tambien la imagen de AWS bucket s3
+            imageRepository.deleteObject(public.image.split('/').pop());
             return res.json({})
         }
     })
+    
 }
 
 
@@ -82,8 +84,9 @@ async function addPublic(req, res){
 
 async function updatePublic(req, res){
     const id  = req.params.id;
-    let imageURL = ""
+    let imageURL = (await publics.findById(id)).image;
     let title = "";
+
     if (!thisPublicExists(id)) {
         return res.status(400).send({ error: 400, msg: 'Esta publicacion no existe' })
     };
@@ -94,9 +97,9 @@ async function updatePublic(req, res){
         }else{
             title  = req.body.title;
         }
+        await imageRepository.deleteObject(imageURL.split('/').pop());
         imageURL = await imageRepository.uploadImage(title,req.file.buffer,req.file.mimetype);
-    }else{
-        imageURL = (await publics.findById(id)).image;
+
     }
 
 
