@@ -29,6 +29,24 @@ class ImageRepository {
             })
         });
     }
+
+    deleteObject(key){
+        
+        return new Promise((resolve, reject) => {
+            const params = {
+                Bucket: config.aws.s3BucketName,
+                Key:key
+            };
+
+            this.s3.deleteObject(params, (err,data) => {
+                if(err){
+                    resolve(err)
+                }else{
+                    resolve(data.Location)
+                }
+            })
+        });
+    }
 }
 
 module.exports = ImageRepository;
