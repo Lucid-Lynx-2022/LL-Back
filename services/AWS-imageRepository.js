@@ -10,7 +10,7 @@ class ImageRepository {
     }
 
     uploadImage(name,image, type){
-        const Key = `${name}.${type.split('/')[1]}`;
+        const Key = `${Math.random()}.${name}.${type.split('/')[1]}`;
         return new Promise((resolve, reject) => {
             const params = {
                 Bucket: config.aws.s3BucketName,
