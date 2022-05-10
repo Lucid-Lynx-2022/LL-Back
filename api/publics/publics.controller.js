@@ -84,8 +84,9 @@ async function addPublic(req, res){
 
 async function updatePublic(req, res){
     const id  = req.params.id;
-    let imageURL = ""
+    let imageURL = (await publics.findById(id)).image;
     let title = "";
+
     if (!thisPublicExists(id)) {
         return res.status(400).send({ error: 400, msg: 'Esta publicacion no existe' })
     };
@@ -96,9 +97,9 @@ async function updatePublic(req, res){
         }else{
             title  = req.body.title;
         }
+        await imageRepository.deleteObject(imageURL.split('/').pop());
         imageURL = await imageRepository.uploadImage(title,req.file.buffer,req.file.mimetype);
-    }else{
-        imageURL = (await publics.findById(id)).image;
+
     }
 
 
