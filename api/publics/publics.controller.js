@@ -42,7 +42,7 @@ async function deletePublic(req, res){
                 error: 400, 
                 msg: 'No puedes borrar la publicacion porque no existe' })
         }else{
-            imageRepository.deleteObject(public.image.split('/').pop());
+           // imageRepository.deleteObject(public.image.split('/').pop());
             return res.json({})
         }
     })
@@ -60,16 +60,18 @@ async function addPublic(req, res){
     if (!req.body.userId && typeof req.body.userId != 'string') {
         return res.status(400).send({ error: 400, msg: 'usuario incorrecto o inexistente' })
     };
-    if (!req.file && typeof req.file != 'file') {
-        return res.status(400).send({ error: 400, msg: 'url imagen incorrecto o inexistente' })
-    };
+  //  if (!req.file && typeof req.file != 'file') {
+  //      return res.status(400).send({ error: 400, msg: 'url imagen incorrecto o inexistente' })
+  //  };
 
-    const imageURL = await imageRepository.uploadImage(req.body.title,req.file.buffer,req.file.mimetype);
+   // const imageURL = await imageRepository.uploadImage(req.body.title,req.file.buffer,req.file.mimetype);
     const newPublic = {
         title: req.body.title,
         description: req.body.description,
         userId: req.body.userId,
-        image: imageURL
+        displayName: req.body.displayName,
+        email: req.body.email,
+    //    image: imageURL
     }
 
     return publics.create(newPublic)

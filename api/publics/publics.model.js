@@ -15,9 +15,15 @@ const publicSchema = new mongoose.Schema(
             type:String,
             require:true
         },
-        image:{
-            type:String
+        displayName:{
+            type:String,
+            require:true
+        },
+        email:{
+            type:String,
+            require:true
         }
+
     }
 )
 
