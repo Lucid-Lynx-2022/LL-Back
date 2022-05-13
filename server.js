@@ -1,6 +1,7 @@
 const express = require('express');
 const config = require('./config');
 const app = express();
+const cors = require('cors');
 
 const PublicsRouter = require('./api/publics');
 
@@ -17,7 +18,7 @@ require('mongoose').connect(config.database.db_uri,
         }
     })
 
-
+app.use(cors());
 app.use(express.json());
 app.use('/publics', PublicsRouter);
 
