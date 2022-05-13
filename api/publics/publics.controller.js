@@ -15,7 +15,7 @@ module.exports = {
 
 
 function getAllPublics(req, res){
-    return publics.find({},'title description userId image')
+    return publics.find({})
         .then(response => {
             return res.json(response)
         })
@@ -71,6 +71,7 @@ async function addPublic(req, res){
         userId: req.body.userId,
         displayName: req.body.displayName,
         email: req.body.email,
+        date: req.body.date,
     //    image: imageURL
     }
 

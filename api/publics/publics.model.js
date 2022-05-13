@@ -22,8 +22,14 @@ const publicSchema = new mongoose.Schema(
         email:{
             type:String,
             require:true
-        }
-
+        },
+        date:{
+            type:String,
+            require:true
+        },
+       // image:{
+       //     type:String
+       // }
     }
 )
 
