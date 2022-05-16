@@ -42,7 +42,9 @@ async function deletePublic(req, res){
                 error: 400, 
                 msg: 'No puedes borrar la publicacion porque no existe' })
         }else{
-           // imageRepository.deleteObject(public.image.split('/').pop());
+            if(public.image){
+                imageRepository.deleteObject(public.image.split('/').pop());
+            }
             return res.json({})
         }
     })
@@ -51,6 +53,7 @@ async function deletePublic(req, res){
 
 
 async function addPublic(req, res){
+    console.log(req)
     if (!req.body.title && typeof req.body.title != 'string') {
         return res.status(400).send({ error: 400, msg: 'titulo incorrecto o inexistente' })
     };
@@ -60,11 +63,13 @@ async function addPublic(req, res){
     if (!req.body.userId && typeof req.body.userId != 'string') {
         return res.status(400).send({ error: 400, msg: 'usuario incorrecto o inexistente' })
     };
-  //  if (!req.file && typeof req.file != 'file') {
-  //      return res.status(400).send({ error: 400, msg: 'url imagen incorrecto o inexistente' })
-  //  };
+    /*
+    if (!req.file && typeof req.file != 'file') {
+        return res.status(400).send({ error: 400, msg: 'url imagen incorrecto o inexistente' })
+    };
 
-   // const imageURL = await imageRepository.uploadImage(req.body.title,req.file.buffer,req.file.mimetype);
+    const imageURL = await imageRepository.uploadImage(req.body.title,req.file.buffer,req.file.mimetype);
+    */
     const newPublic = {
         title: req.body.title,
         description: req.body.description,
@@ -72,7 +77,7 @@ async function addPublic(req, res){
         displayName: req.body.displayName,
         email: req.body.email,
         date: req.body.date,
-    //    image: imageURL
+        //image: imageURL
     }
 
     return publics.create(newPublic)
@@ -100,7 +105,9 @@ async function updatePublic(req, res){
         }else{
             title  = req.body.title;
         }
-        await imageRepository.deleteObject(imageURL.split('/').pop());
+        if(imageURL){
+            await imageRepository.deleteObject(imageURL.split('/').pop());
+        }
         imageURL = await imageRepository.uploadImage(title,req.file.buffer,req.file.mimetype);
 
     }
@@ -112,6 +119,9 @@ async function updatePublic(req, res){
             title: req.body.title,
             description: req.body.description,
             userId: req.body.userId,
+            displayName: req.body.displayName,
+            email: req.body.email,
+            date: req.body.date,
             image: imageURL
         },
         function(err, result) {

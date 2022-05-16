@@ -27,9 +27,9 @@ const publicSchema = new mongoose.Schema(
             type:String,
             require:true
         },
-       // image:{
-       //     type:String
-       // }
+        image:{
+            type:String
+        }
     }
 )
 
