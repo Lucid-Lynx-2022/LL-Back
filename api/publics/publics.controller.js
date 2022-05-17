@@ -15,11 +15,22 @@ module.exports = {
 
 
 function getAllPublics(req, res){
-    return publics.find({})
+    //etc. example.com/user/?userId=00000
+    const query = req.query; // {userId:"0000"}
+    if(query.userId){
+        return publics.find({userId: query.userId})
         .then(response => {
             return res.json(response)
         })
-        .catch(err => console.error("Error al encontrar la publicacion"));
+        .catch(err => console.error("Error al encontrar las publicaciones del usuario")); 
+    }else{
+        return publics.find({})
+            .then(response => {
+                return res.json(response)
+            })
+            .catch(err => console.error("Error al encontrar la publicacion getAllPublics"));
+    }
+
 }
 
 function getPublicById (req, res){
@@ -27,7 +38,7 @@ function getPublicById (req, res){
         .then(response => {
             return res.json(response);
         })
-        .catch(err => console.error("Error al encontrar la publicacion"));
+        .catch(err => console.error("Error al encontrar la publicacion getPublicById"));
 }
 
 
