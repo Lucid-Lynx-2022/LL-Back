@@ -3,7 +3,7 @@ const publics = require('./publics.model')
 
 const ImageRepository = require('../../services/AWS-imageRepository');
 const imageRepository = new ImageRepository();
-
+const MAX_SIZE_FILE_KB =  40000000 //40MB
 
 module.exports = {
     getAllPublics : getAllPublics,
@@ -53,7 +53,7 @@ async function deletePublic(req, res){
 
 
 async function addPublic(req, res){
-    console.log(req)
+    //console.log(req.file)
     if (!req.body.title && typeof req.body.title != 'string') {
         return res.status(400).send({ error: 400, msg: 'titulo incorrecto o inexistente' })
     };
@@ -63,13 +63,17 @@ async function addPublic(req, res){
     if (!req.body.userId && typeof req.body.userId != 'string') {
         return res.status(400).send({ error: 400, msg: 'usuario incorrecto o inexistente' })
     };
-    /*
+    
     if (!req.file && typeof req.file != 'file') {
         return res.status(400).send({ error: 400, msg: 'url imagen incorrecto o inexistente' })
     };
+    if(req.file.size > MAX_SIZE_FILE_KB){
+        return res.status(400).send({ error: 400, msg: 'tamaño de fichero excedido, maximo 40MB' })
+    }
 
+    
     const imageURL = await imageRepository.uploadImage(req.body.title,req.file.buffer,req.file.mimetype);
-    */
+    
     const newPublic = {
         title: req.body.title,
         description: req.body.description,
@@ -77,7 +81,7 @@ async function addPublic(req, res){
         displayName: req.body.displayName,
         email: req.body.email,
         date: req.body.date,
-        //image: imageURL
+        image: imageURL
     }
 
     return publics.create(newPublic)
@@ -91,6 +95,7 @@ async function addPublic(req, res){
 
 
 async function updatePublic(req, res){
+    
     const id  = req.params.id;
     let imageURL = (await publics.findById(id)).image;
     let title = "";
@@ -99,13 +104,16 @@ async function updatePublic(req, res){
         return res.status(400).send({ error: 400, msg: 'Esta publicacion no existe' })
     };
     if(req.file){
-
+        if(req.file.size > MAX_SIZE_FILE_KB){
+            return res.status(400).send({ error: 400, msg: 'tamaño de fichero excedido, maximo 1MB' })
+        }
         if(!req.body.title && typeof req.body.title != 'string'){
             title = (await publics.findById(id)).title;
         }else{
             title  = req.body.title;
         }
         if(imageURL){
+            // eliminamos imagen anterior
             await imageRepository.deleteObject(imageURL.split('/').pop());
         }
         imageURL = await imageRepository.uploadImage(title,req.file.buffer,req.file.mimetype);
