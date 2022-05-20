@@ -27,7 +27,7 @@ function getAllPublics(req, res){
         .catch(err => console.error("Error al encontrar las publicaciones del usuario")); 
     }else if(query.recent){
         //Esto le devolverá los 3 ultimos tutoriales añadidos
-        return publics.find().sort({_id:-1}).limit(3)
+        return publics.find().sort({_id:1}).limit(3)
         .then(response => {
             return res.json(response)
         })
