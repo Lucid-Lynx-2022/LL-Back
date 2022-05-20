@@ -32,7 +32,7 @@ function getAllPublics(req, res){
         })
         .catch(err => console.error("Error al encontrar las publicaciones")); 
     }else if(query.home){
-        // get only 20
+        // get only last 10
         return publics.find({}).sort({_id:-1}).limit(10)
             .then(response => {
                 return res.json(response)
