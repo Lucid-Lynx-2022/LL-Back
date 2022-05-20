@@ -19,6 +19,7 @@ function getAllPublics(req, res){
     // https://lucidlynx22.herokuapp.com/publics/?recent=true
     const query = req.query;
     if(query.userId){
+        // solo obtiene los tutoriales del usuario
         return publics.find({userId: query.userId})
         .then(response => {
             return res.json(response)
@@ -38,7 +39,6 @@ function getAllPublics(req, res){
                 return res.json(response)
             })
             .catch(err => console.error("Error al encontrar todas las publicaciones"));
-
     }else{
         // get all
         return publics.find({})
