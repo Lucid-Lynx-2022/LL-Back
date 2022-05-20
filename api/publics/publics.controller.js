@@ -15,20 +15,28 @@ module.exports = {
 
 
 function getAllPublics(req, res){
-    //etc. example.com/user/?userId=00000
-    const query = req.query; // {userId:"0000"}
+    // https://lucidlynx22.herokuapp.com/publics/?userId=00000
+    // https://lucidlynx22.herokuapp.com/publics/?recent=true
+    const query = req.query;
     if(query.userId){
         return publics.find({userId: query.userId})
         .then(response => {
             return res.json(response)
         })
         .catch(err => console.error("Error al encontrar las publicaciones del usuario")); 
+    }else if(query.recent){
+        //Esto le devolverá los 3 ultimos tutoriales añadidos
+        return publics.find().sort({_id:-1}).limit(3)
+        .then(response => {
+            return res.json(response)
+        })
+        .catch(err => console.error("Error al encontrar las publicaciones")); 
     }else{
         return publics.find({})
             .then(response => {
                 return res.json(response)
             })
-            .catch(err => console.error("Error al encontrar la publicacion getAllPublics"));
+            .catch(err => console.error("Error al encontrar todas las publicaciones"));
     }
 
 }
